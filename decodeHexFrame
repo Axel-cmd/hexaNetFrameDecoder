@@ -1,0 +1,46 @@
+#!/usr/bin/env python3
+
+import sys
+
+def main(argv): 
+  # 
+  dump = []
+  
+  # try to open file passed by user
+  try :
+    with open(argv[0], "r", encoding="utf8") as hexdump:
+      #assign hexa value table to dump var 
+      dump = hexdump.read().replace("\n", " ").split(" ") 
+  except : 
+    # if no file print err & exit 
+    print("Impossible to open hexa file !")
+    sys.exit()
+
+  dump_length = len(dump)
+  
+  print(f"Destination:\t{dump[0:6]}")
+
+  print(f"Source:\t{dump[6:12]}")
+
+  print(f"Type:\t{dump[12:14]}")
+
+  print(f"Data:\t{dump[14:dump_length-5]}")
+
+  print(f"CRC:\t{dump[dump_length-5:dump_length-1]}\n")
+
+
+  data = []
+  print(f"Data to text (ASCII)\n")
+  
+  for c in dump[14:dump_length-5]:
+    try:
+      data.append(bytearray.fromhex(c).decode())
+    except UnicodeDecodeError:
+      data.append('.')
+
+  print(", ".join(data).replace(", ", ""))
+  
+
+
+if __name__ == "__main__":
+  main(sys.argv[1:])
